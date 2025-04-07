@@ -34,8 +34,8 @@ jobs:
           git submodule update --init --remote llvm
           mkdir build
           cd build
-          ../configure --prefix=/opt/riscv --with-languages="c,c++" --with-arch=$MARCH --with-abi=$MABI --enable-llvm
-          make -j $(nproc)
+          ../configure --prefix="$RISCV" --with-languages="c,c++" --with-arch=$MARCH --with-abi=$MABI --enable-llvm
+          make -j $(sysctl -n hw.logicalcpu)
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
