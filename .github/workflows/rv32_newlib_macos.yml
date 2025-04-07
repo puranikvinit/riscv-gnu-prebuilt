@@ -21,7 +21,7 @@ jobs:
 
       - name: Build RISC-V Toolchain
         run: |
-          export RISCV="/opt/riscv"
+          export RISCV="${HOME}/riscv"
           export MARCH=rv32ic_zba_zbb_zbc_zbkb_zbs_zca_zcb_zclsd_zicntr_zicond_zicsr_zifencei_zilsd
           export MABI=ilp32
           export CPPFLAGS="-I/opt/homebrew/include -I/opt/homebrew/Cellar/gmp/6.3.0/include -L/opt/homebrew/Cellar/mpfr/4.2.1-p1/lib -L/opt/homebrew/Cellar/gmp/6.3.0/lib"
