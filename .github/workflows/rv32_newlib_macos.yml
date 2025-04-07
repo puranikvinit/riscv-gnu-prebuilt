@@ -1,0 +1,44 @@
+name: Build RISC-V Toolchain RV32 Newlib for MacOS
+
+on:
+  workflow_dispatch:
+    inputs:
+      build:
+        description: 'Run the RISC-V Toolchain build for MacOS'
+        required: true
+        default: 'yes'
+
+jobs:
+  build:
+    runs-on: macos-15
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install Dependencies
+        run: brew install python3 gawk gnu-sed make gmp mpfr libmpc isl zlib expat texinfo flock libslirp
+
+      - name: Build RISC-V Toolchain
+        run: |
+          export RISCV="/opt/riscv"
+          export MARCH=rv32ic_zba_zbb_zbc_zbkb_zbs_zca_zcb_zclsd_zicntr_zicond_zicsr_zifencei_zilsd
+          export MABI=ilp32
+          export CPPFLAGS="-I/opt/homebrew/include -I/opt/homebrew/Cellar/gmp/6.3.0/include -L/opt/homebrew/Cellar/mpfr/4.2.1-p1/lib -L/opt/homebrew/Cellar/gmp/6.3.0/lib"
+          export CFLAGS="-I/opt/homebrew/Cellar/gmp/6.3.0/include -I/opt/homebrew/Cellar/mpfr/4.2.1-p1/include"
+          export LDFLAGS="-L/opt/homebrew/lib -L/opt/homebrew/Cellar/mpfr/4.2.1-p1/lib -L/opt/homebrew/Cellar/gmp/6.3.0/lib"
+          mkdir -p "$RISCV"
+          git clone https://github.com/riscv/riscv-gnu-toolchain
+          cd riscv-gnu-toolchain
+          git submodule set-branch -b main llvm
+          git submodule update --init --remote llvm
+          mkdir build
+          cd build
+          ../configure --prefix=/opt/riscv --with-languages="c,c++" --with-arch=$MARCH --with-abi=$MABI --enable-llvm
+          make -j $(nproc)
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: riscv-toolchain-rv64-newlib-macos
+          path: /opt/riscv/bin
