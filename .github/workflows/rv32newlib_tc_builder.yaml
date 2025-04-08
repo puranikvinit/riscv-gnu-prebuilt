@@ -21,11 +21,14 @@ jobs:
 
       - name: Build RISC-V Toolchain
         run: |
-          export MARCH=rv32ic_zba_zbb_zbc_zbkb_zbs_zca_zcb_zicntr_zicond_zicsr_zifencei
+          export MARCH=rv32ic_zba_zbb_zbc_zbkb_zbs_zca_zcb_zclsd_zicntr_zicond_zicsr_zifencei_zilsd
           export MABI=ilp32
           git clone https://github.com/riscv/riscv-gnu-toolchain
           cd riscv-gnu-toolchain
-          ./configure --prefix=/opt/riscv --with-arch=$MARCH --with-abi=$MABI
+          git submodule set-branch -b main llvm
+          git submidule update --init --remote llvm
+          mkdir build && cd build
+          ../configure --prefix=/opt/riscv --with-arch=$MARCH --with-abi=$MABI --enable-llvm
           make -j $(nproc)
 
       - name: Upload Artifact
