@@ -26,7 +26,7 @@ jobs:
           git clone https://github.com/riscv/riscv-gnu-toolchain
           cd riscv-gnu-toolchain
           git submodule set-branch -b main llvm
-          git submidule update --init --remote llvm
+          git submodule update --init --remote llvm
           mkdir build && cd build
           ../configure --prefix=/opt/riscv --with-arch=$MARCH --with-abi=$MABI --enable-llvm
           make -j $(nproc)
